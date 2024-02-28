@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.book.dao.WishMapper">
+
+    <select id="getWishList" resultType="wish">
+        select w.id as id,w.user_id as user_id,u.nickname as nickName,u.tel as tel,
+        w.title as title ,w.`desc` as 'desc',w.state as state,s.name as sName
+        from wish w inner join user u on w.user_id = u.id inner join state
+        s on w.state = s.id
+    </select>
+
+    <select id="getWishById" resultType="wish">
+        select w.id as id,w.user_id as user_id,u.nickname as nickName,u.tel as tel,
+        w.title as title ,w.`desc` as 'desc',w.state as state,s.name as sName
+        from wish w inner join user u on w.user_id = u.id inner join state
+        s on w.state = s.id
+        where w.id = #{id}
+    </select>
+
+</mapper>

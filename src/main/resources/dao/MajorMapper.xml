@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.book.dao.MajorMapper">
+
+    <select id="getMajorList" resultType="major">
+        select m.id as id,m.name as name,m.departId as departId,d.name as departName from major m inner
+        join department d on m.departId = d.id
+    </select>
+
+    <select id="getMajorById" resultType="major">
+        select m.id as id,m.name as name,m.departId as departId,d.name as departName from major m inner
+        join department d on m.departId = d.id
+        <where>
+            <if test="id!=null and id !=0">and m.id = #{id}</if>
+        </where>
+    </select>
+
+    <insert id="addMajor" parameterType="major">
+        insert into major (name,departId) values (#{name},#{departId})
+    </insert>
+
+    <delete id="delMajor">
+        delete from major where id = #{id}
+    </delete>
+
+    <update id="updMajor">
+        update major set name = #{name},departId = #{departId} where id = #{id}
+    </update>
+
+</mapper>

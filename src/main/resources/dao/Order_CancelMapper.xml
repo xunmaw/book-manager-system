@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.book.dao.Order_CancelMapper">
+
+    <select id="getOrder_CancelList" resultType="order_cancel">
+        select o1.id as id,o1.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as
+        author,b.price as price,b.newDeg as newDeg,
+        o1.order_id as order_id,o2.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o1.reason as reason,o1.state as state
+        from order_cancel o1 inner join `order` o2 on o1.order_id = o2.id inner join
+        book b on o1.book_id = b.id inner join user u on o2.id_buy = u.id
+    </select>
+
+    <select id="getOrder_CancelById" resultType="order_cancel">
+        select o1.id as id,o1.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as
+        author,b.price as price,b.newDeg as newDeg,
+        o1.order_id as order_id,o2.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o1.reason as reason,o1.state as state
+        from order_cancel o1 inner join `order` o2 on o1.order_id = o2.id inner join
+        book b on o1.book_id = b.id inner join user u on o2.id_buy = u.id
+        where o1.id = #{id}
+    </select>
+
+    <!-- 精准查询 -->
+    <select id="selectAccuracyOrder2" resultType="order_cancel">
+        select o1.id as id,o1.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as
+        author,b.price as price,b.newDeg as newDeg,
+        o1.order_id as order_id,o2.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o1.reason as reason,o1.state as state
+        from order_cancel o1 inner join
+        `order` o2 on o1.order_id = o2.id inner join
+        book b on o1.book_id = b.id inner join
+        user u on o2.id_buy = u.id
+        <where>
+            <if test="bookname!=null">
+                and b.name = #{bookname}
+            </if>
+            <if test="username!=null">
+                and u.nickname = #{username}
+            </if>
+            <if test="state!=null and state == 1">
+                and o1.state = #{state}
+            </if>
+            <if test="state!=null and state > 1">
+                and o1.state > 1
+            </if>
+
+        </where>
+    </select>
+
+    <!-- 模糊查询 -->
+    <select id="likeSelectOrder2" resultType="order_cancel">
+        select o1.id as id,o1.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as
+        author,b.price as price,b.newDeg as newDeg,
+        o1.order_id as order_id,o2.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o1.reason as reason,o1.state as state
+        from order_cancel o1 inner join
+        `order` o2 on o1.order_id = o2.id inner join
+        book b on o1.book_id = b.id inner join
+        user u on o2.id_buy = u.id
+        <where>
+            <if test="bookname!=null">
+                and b.name like concat('%',#{bookname},'%')
+            </if>
+            <if test="username!=null">
+                and u.nickname like concat('%',#{username},'%')
+            </if>
+            <if test="state!=null and state == 1">
+                and o1.state = #{state}
+            </if>
+            <if test="state!=null and state > 1">
+                and o1.state > 1
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

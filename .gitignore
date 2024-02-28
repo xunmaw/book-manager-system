@@ -1,0 +1,11 @@
+.idea
+*.iml
+/**/apollo/
+/**/target/
+*.log
+*.gz
+*.tmp
+
+# misc
+.DS_Store
+*.pem

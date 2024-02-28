@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.book.dao.UserMapper">
+
+    <select id="getUsers" resultType="user">
+        select u.id as id,u.nickname as nickname,u.password as password,u.tel as tel,u.registerTime as registerTime,
+        u.departId as departId,d.name as departName,u.majorId as majorId,m.name as majorName,
+        u.grade as grade,u.address as address,u.name as name
+        from user as u inner join department d on u.departId = d.id inner join
+        major as m on u.majorId = m.id
+    </select>
+
+    <select id="getUserById" resultType="user">
+        select u.id as id,u.nickname as nickname,u.password as password,u.tel as tel,u.registerTime as registerTime,
+        u.departId as departId,d.name as departName,u.majorId as majorId,m.name as majorName,
+        u.grade as grade,u.address as address,u.name as name
+        from user as u inner join department d on u.departId = d.id inner join
+        major as m on u.majorId = m.id
+        where u.id = #{id}
+    </select>
+
+    <select id="selectAccuracyUser" resultType="user">
+        select u.id as id,u.nickname as nickname,u.password as password,u.tel as tel,u.registerTime as registerTime,
+        u.departId as departId,d.name as departName,u.majorId as majorId,m.name as majorName,
+        u.grade as grade,u.address as address,u.name as name
+        from user as u inner join
+        department d on u.departId = d.id inner join
+        major as m on u.majorId = m.id
+        <where>
+            <if test="username!=null">
+                and u.nickname = #{username}
+            </if>
+            <if test="name!=null">
+                and u.name = #{name}
+            </if>
+            <if test="dept_id!=null">
+                and d.id = #{dept_id}
+            </if>
+            <if test="major_id!=null">
+                and m.id = #{major_id}
+            </if>
+        </where>
+    </select>
+
+    <select id="likeSelectUser" resultType="user">
+        select u.id as id,u.nickname as nickname,u.password as password,u.tel as tel,u.registerTime as registerTime,
+        u.departId as departId,d.name as departName,u.majorId as majorId,m.name as majorName,
+        u.grade as grade,u.address as address,u.name as name
+        from user as u inner join
+        department d on u.departId = d.id inner join
+        major as m on u.majorId = m.id
+        <where>
+            <if test="username!=null">
+                and u.nickname like concat('%',#{username},'%')
+            </if>
+            <if test="name!=null">
+                and u.name like concat('%',#{name},'%')
+            </if>
+            <if test="dept_id!=null">
+                and d.id = #{dept_id}
+            </if>
+            <if test="major_id!=null">
+                and m.id = #{major_id}
+            </if>
+        </where>
+    </select>
+
+</mapper>

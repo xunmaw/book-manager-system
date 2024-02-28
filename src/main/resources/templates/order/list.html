@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Dashboard Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">
+    <style type="text/css">
+        /* Chart.js */
+
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+</head>
+
+<body>
+
+<!--顶部导航栏-->
+<div th:replace="~{commons/commons::topbar}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!--侧边栏-->
+        <div th:replace="~{commons/commons::sidebar(active='/order/list.html')}"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+
+            <form th:action="@{/order/query}" method="post" id="queryform">
+                <div class="content_right_content">
+							<span>
+								<input name="btnType" id="btnType" value="1" th:value="${btnType}" hidden>
+								<input name="pageNum" id="pageNum" value="1" hidden>
+
+								订单号：<input type="number" placeholder="请输入订单号" name="oid" th:value="${oid}">&nbsp;&nbsp;
+
+								下单用户：<input type="text" placeholder="请输入用户名" name="username" th:value="${username}">&nbsp;&nbsp;&nbsp;
+
+								订单状态：<select name="status">
+											<option value="0">全部</请选择></option>
+											<option value="1" th:selected="${selectstatus} == 1">未售出</option>
+											<option value="2" th:selected="${selectstatus} == 2">已售出</option>
+											<option value="3" th:selected="${selectstatus} == 3">取消出售</option>
+											<option value="4" th:selected="${selectstatus} == 4">未收货</option>
+											<option value="5" th:selected="${selectstatus} == 5">已收货</option>
+											<option value="6" th:selected="${selectstatus} == 6">确认交易</option>
+											<option value="7" th:selected="${selectstatus} == 7">取消交易</option>
+											<option value="8" th:selected="${selectstatus} == 8">未获得</option>
+											<option value="9" th:selected="${selectstatus} == 9">已获得</option>
+										</select>&nbsp;&nbsp;
+
+                				<button type="submit" class="btn btn-success btn-sm" onclick="queryTypeSumbit(1)">精确查询</button>
+                				<button type="submit" class="btn btn-success btn-sm" onclick="queryTypeSumbit(2)">模糊查询</button>
+
+							</span>
+                </div>
+            </form>
+
+            <br>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>购买书名</th>
+                        <th>价格</th>
+                        <th>购买人用户名</th>
+                        <th>购买人电话</th>
+                        <th>发货方用户名</th>
+                        <th>发货方电话</th>
+                        <th>订单状态</th>
+                        <th>付款时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order:${orders}">
+                        <td th:text="${order.getId()}"></td>
+                        <td th:text="${order.getName()}"></td>
+                        <td th:text="${order.getPrice()}"></td>
+                        <td th:text="${order.getNickname()}"></td>
+                        <td th:text="${order.getTel()}"></td>
+                        <td th:text="${order.getUName()}"></td>
+                        <td th:text="${order.getUTel()}"></td>
+                        <td th:text="${order.getSname()}"></td>
+                        <td th:text="${#dates.format(order.getTime(),'yyyy-MM-dd HH:mm:ss' )}"></td>
+
+                        <td>
+                            <a class="btn btn-sm btn-primary"
+                               th:href="@{/order/detail/{id}(id=${order.getId()})}">详情</a>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+
+                <ul class="pagination justify-content-end" style="position: relative">
+                    <a class="btn btn-primary left-button" style="color: white;position: absolute;left: 0" value="1"
+                       onclick="exportSumbit()">导出全部数据</a>
+                    <!--首页-->
+                    <li class="page-item">
+                        <a class="page-link" th:onclick="querySumbit([[${pageInfo.navigateFirstPage}]]);">首页</a>
+                    </li>
+                    <!--上一页-->
+                    <li class="page-item">
+                        <a class="page-link" th:onclick="querySumbit([[${pageInfo.prePage}]]);">上一页</a>
+                    </li>
+                    <!--循环遍历显示中间的页数-->
+                    <li th:each="list:${pageInfo.navigatepageNums}">
+                        <a th:onclick="querySumbit([[${list}]])" style="cursor: pointer" th:text="${list}"
+                           th:if="${list != pageInfo.pageNum}"></a>
+                        <span style="font-weight: bold;background: #6faed9;" th:if="${list == pageInfo.pageNum}"
+                              th:text="${list}"></span>
+                    </li>
+                    <!--下一页-->
+                    <li class="page-item" th:if="${pageInfo.hasNextPage}">
+                        <a class="page-link" th:onclick="querySumbit([[${pageInfo.nextPage}]])">下一页</a>
+                    </li>
+                    <!--尾页-->
+                    <li class="page-item"><a class="page-link"
+                                             th:onclick="querySumbit([[${pageInfo.navigateLastPage}]])">尾页</a></li>
+                </ul>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+
+<!-- Icons -->
+<script type="text/javascript" th:src="@{/js/feather.min.js}"></script>
+<script>
+    feather.replace()
+</script>
+
+<!-- Graphs -->
+<script type="text/javascript" th:src="@{/js/Chart.min.js}"></script>
+<script>
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            datasets: [{
+                data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                lineTension: 0,
+                backgroundColor: 'transparent',
+                borderColor: '#007bff',
+                borderWidth: 4,
+                pointBackgroundColor: '#007bff'
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: false
+                    }
+                }]
+            },
+            legend: {
+                display: false,
+            }
+        }
+
+    });
+
+    //分页查询，并设置页数
+    function querySumbit(pageNum) {
+        var myform = document.getElementById("queryform");
+        var pageInput = document.getElementById("pageNum");
+        pageInput.value = pageNum;
+        myform.setAttribute("action", "/order/query");
+        myform.submit();
+    }
+
+    //设置查询类型，并提交表单
+    function queryTypeSumbit(btnType) {
+
+        var myform = document.getElementById("queryform");
+        var btnTypeInput = document.getElementById("btnType");
+        myform.setAttribute("action", "/order/query");
+        btnTypeInput.value = btnType;
+        myform.submit();
+    }
+
+    //导出当前查询的所有数据
+    function exportSumbit() {
+        var myform = document.getElementById("queryform");
+        myform.setAttribute("action", "/order/export");
+        myform.submit();
+    }
+
+</script>
+
+</body>
+
+</html>

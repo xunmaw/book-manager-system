@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.book.dao.DepartmentMapper">
+
+    <select id="getDepartList" resultType="department">
+        select * from department
+    </select>
+
+    <select id="getDepartById" resultType="department">
+        select * from department where id = #{id}
+    </select>
+
+    <insert id="addDepart" parameterType="department">
+        insert into department (name) values (#{name})
+    </insert>
+
+    <delete id="delDepart">
+        delete from department where id = #{id}
+    </delete>
+
+    <update id="updateDepart">
+        update department set name = #{name} where id = #{id}
+    </update>
+
+</mapper>

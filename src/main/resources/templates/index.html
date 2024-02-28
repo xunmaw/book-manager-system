@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>二手书系统-登录</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/signin.css}" rel="stylesheet">
+</head>
+
+<body class="text-center">
+<div class="login-list">
+    <form class="form-signin" th:action="@{/login}">
+
+        <div style="text-align: center;font-size: 24px;font-family: 楷体;margin-bottom: 30px;">校园二手书管理系统</div>
+
+        <input type="text" name="username" class="form-control" th:placeholder="用户名" required="" autofocus="">
+        <br>
+
+        <input type="password" name="password" class="form-control" th:placeholder="密码" required="">
+        <br>
+
+        <div class="input-group" style="display: flex;vertical-align: center;justify-content: space-between; ">
+            <input type="text" id="ERcode" style="display: inline-block;width: 33%;vertical-align: center"
+                   class="form-control" placeholder="输入验证码"
+                   maxlength="4" required/>
+
+            <canvas id="canvas" width="90" height="39" style="display: inline-block;vertical-align: center"></canvas>
+        </div>
+        <a href="#" id="changeImg" style="float:right; text-decoration: underline; margin-bottom: 20px">看不清，换一张</a>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="return check()">登录</button>
+
+        <!--如果msg为空则不显示-->
+        <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+
+    </form>
+</div>
+
+
+</body>
+<script>
+    /**生成一个随机数**/
+    function randomNum(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    /**生成一个随机色**/
+    function randomColor(min, max) {
+        var r = randomNum(min, max);
+        var g = randomNum(min, max);
+        var b = randomNum(min, max);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
+    var code = "";
+    drawPic();
+    document.getElementById("changeImg").onclick = function (e) {
+        e.preventDefault();
+        drawPic();
+    }
+
+    function check() {
+        var ERcode = document.getElementById("ERcode").value;
+        if (ERcode.toLowerCase() == code.toLowerCase()) {
+            console.log("验证码正确");
+            return true;
+        } else {
+            alert("验证码错误!");
+        }
+        return false;
+    }
+
+    /**绘制验证码图片**/
+    function drawPic() {
+        var canvas = document.getElementById("canvas");
+        var width = canvas.width;
+        var height = canvas.height;
+        var ctx = canvas.getContext('2d');
+        ctx.textBaseline = 'bottom';
+
+        /**绘制背景色**/
+        ctx.fillStyle = randomColor(180, 240); //颜色若太深可能导致看不清
+        ctx.fillRect(0, 0, width, height);
+        /**绘制文字**/
+        var str = 'ABCEFGHJKLMNPQRSTWXY123456789';
+        var temp = "";
+        for (var i = 0; i < 4; i++) {
+            var txt = str[randomNum(0, str.length)];
+            temp += txt;
+            ctx.fillStyle = randomColor(50, 160);  //随机生成字体颜色
+            ctx.font = randomNum(19, 24) + 'px SimHei'; //随机生成字体大小
+            var x = 8 + i * 22;
+            var y = randomNum(25, 30);
+            var deg = randomNum(-45, 45);
+            //修改坐标原点和旋转角度
+            ctx.translate(x, y);
+            ctx.rotate(deg * Math.PI / 180);
+            ctx.fillText(txt, 0, 0);
+            //恢复坐标原点和旋转角度
+            ctx.rotate(-deg * Math.PI / 180);
+            ctx.translate(-x, -y);
+        }
+        code = temp;
+        console.log("code: " + code);
+        /**绘制干扰线**/
+        for (var i = 0; i < 5; i++) {
+            ctx.strokeStyle = randomColor(40, 180);
+            ctx.beginPath();
+            ctx.moveTo(randomNum(0, width), randomNum(0, height));
+            ctx.lineTo(randomNum(0, width), randomNum(0, height));
+            ctx.stroke();
+        }
+        /**绘制干扰点**/
+        for (var i = 0; i < 10; i++) {
+            ctx.fillStyle = randomColor(0, 255);
+            ctx.beginPath();
+            ctx.arc(randomNum(0, width), randomNum(0, height), 1, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+    }
+</script>
+</html>
+

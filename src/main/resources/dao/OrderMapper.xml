@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.book.dao.OrderMapper">
+
+    <select id="getOrders" resultType="order">
+        select o.id as id,o.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as
+        price,b.newDeg as newDeg,b.uId as uId,
+        o.time as time,o.state as state,s.name as sname
+        from `order` o inner join `user` u on o.id_buy = u.id inner join state s on
+        o.state = s.id inner join book b on o.book_id = b.id
+    </select>
+
+    <select id="getOrderById" resultType="order">
+        select o.id as id,o.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as
+        price,b.newDeg as newDeg,b.uId as uId,
+        o.time as time,o.state as state,s.name as sname
+        from `order` o inner join user u on o.id_buy = u.id inner join
+        state s on o.state = s.id inner join book b on o.book_id = b.id
+        where o.id = #{id}
+    </select>
+    <!-- 精准查询-->
+    <select id="selectAccuracyOrder" resultType="order">
+        select o.id as id,o.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as
+        price,b.newDeg as newDeg,b.uId as uId,
+        o.time as time,o.state as state,s.name as sname
+        from orders o inner join
+        user u on o.id_buy = u.id inner join
+        state s on o.state = s.id inner join
+        book b on o.book_id = b.id
+        <where>
+            <if test="oid!=null">
+                and o.id = #{oid}
+            </if>
+
+            <if test="username!=null">
+                and u.nickname = #{username}
+            </if>
+            <if test="status!=null">
+                and o.state = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- 模糊查询-->
+    <select id="selectLikeOrder" resultType="order">
+        select o.id as id,o.id_buy as id_buy,u.nickname as nickname,u.tel as tel,u.address as address,
+        o.book_id as book_id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as
+        price,b.newDeg as newDeg,b.uId as uId,
+        o.time as time,o.state as state,s.name as sname
+        from orders o inner join
+        user u on o.id_buy = u.id inner join
+        state s on o.state = s.id inner join
+        book b on o.book_id = b.id
+        <where>
+            <if test="oid!=null">
+                and o.id = #{oid}
+            </if>
+
+            <if test="username!=null">
+                and u.nickname like concat('%',#{username},'%')
+            </if>
+            <if test="status!=null">
+                and o.state = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据id查询订单状态 -->
+    <select id="selectState" resultType="java.lang.String">
+        select name from state where id = #{id}
+    </select>
+
+</mapper>

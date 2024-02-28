@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xunmaw.book.dao.BookMapper">
+
+    <select id="getBooks" resultType="book">
+        select
+        b.id as id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as price,b.newDeg
+        as newDeg,
+        b.uId as uId,u.nickname as uname,s.name as sname,b.publishTime as publishTime
+        from book as b inner join state s on b.state = s.id inner join user
+        as u on b.uId = u.id
+    </select>
+
+    <select id="getBookById" resultType="book">
+        select
+        b.id as id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as price,b.newDeg
+        as newDeg,
+        b.uId as uId,u.nickname as uname,s.name as sname,b.publishTime as publishTime
+        from book as b inner join state s on b.state = s.id inner join user
+        as u on b.uId = u.id
+        where b.id = #{id}
+    </select>
+
+    <select id="selectAccuracyBook" resultType="book">
+        select
+        b.id as id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as price,b.newDeg
+        as newDeg,
+        b.uId as uId,u.nickname as uname,s.name as sname,b.publishTime as publishTime
+        from book as b inner join
+        state s on b.state = s.id inner join
+        user as u on b.uId = u.id
+        <where>
+            <if test="bookname!=null">
+                and b.name = #{bookname}
+            </if>
+            <if test="state!=null">
+                and b.state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <select id="likeSelectBook" resultType="book">
+        select
+        b.id as id,b.name as name,b.publisher as publisher,b.code as code,b.author as author,b.price as price,b.newDeg
+        as newDeg,
+        b.uId as uId,u.nickname as uname,s.name as sname,b.publishTime as publishTime
+        from book as b inner join state s on b.state = s.id inner join user
+        as u on b.uId = u.id
+        <where>
+            <if test="bookname!=null">
+                and b.name like concat('%',#{bookname},'%')
+            </if>
+            <if test="state!=null">
+                and b.state = #{state}
+            </if>
+        </where>
+    </select>
+
+</mapper>
